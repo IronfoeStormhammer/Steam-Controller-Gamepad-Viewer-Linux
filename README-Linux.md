@@ -1,49 +1,44 @@
-# Steam Controller Viewer — Linux / SteamOS
+# Steam Controller Viewer — Linux v2.0.2
 
-Launch **Steam Controller Viewer** from the Desktop Mode application menu, or run
-`/home/deck/SteamControllerViewerLinux/launch.sh`. Steam can remain running.
+Extract the release and run `./launch.sh`, or `./SteamControllerGamepadViewer`.
+Steam can remain running. The .NET runtime is included; no SDK is required.
+Keep the extracted directory in a stable location.
 
-OBS: Browser Source, URL **http://127.0.0.1:31337/**, width **1200**, height **900**,
-Custom CSS empty. Existing visual query parameters remain supported.
-Live diagnostic screen: http://127.0.0.1:31337/diagnostics.html
-
-Installed release: `/home/deck/SteamControllerViewerLinux/artifacts/linux-x64/`.
-Self-contained Linux x64 executable: `SteamControllerGamepadViewer`.
-Source and project-local SDK: `/home/deck/SteamControllerViewerLinux/`.
-Baseline: upstream 0a9d09c, local branch `linux-port`.
-
-The launcher starts the user service once; repeated launches do not create competing servers.
-Stop: `systemctl --user stop steam-controller-viewer.service`.
-Debug: stop the service, then run `./launch.sh --debug` from this release folder.
-Logs: `journalctl --user -u steam-controller-viewer.service -f`.
-
-Optional autostart (installed but NOT enabled):
-`systemctl --user enable steam-controller-viewer.service`
-Disable: `systemctl --user disable steam-controller-viewer.service`.
-
-HID permissions already work on this Deck. Only if access is denied, run
-`./install-udev.sh` (asks for sudo). It grants session access only to the observed
-Valve receiver 28de:1304; no root viewer, firmware commands, device grabs, or remapping.
-
-The Linux backend reads physical vendor HID reports directly and does not initialize
-SDL's hardware drivers, avoiding controller configuration writes. The Deck's internal
-controller is deliberately excluded so it cannot replace a sleeping external controller.
-Triton 0x42/0x45 packets retain upstream decoding. Classic 2015 USB/dongle reports
-also decode controls and multiplexed pad/stick coordinates; classic hardware was not
-attached for physical verification. BLE framing is not implemented. A classic 2015
-controller has two rear levers, not four; unavailable touch/pressure sensors are not invented.
-The original upstream controller art is retained. Only one active external controller
-is displayed. On loss of reports the overlay clears after 1.5 seconds; rediscovery runs
-every second. Physical sleep/reconnect has not been hardware-verified.
-
-For another installation path, edit the supplied user service's ExecStart and
-WorkingDirectory before copying it to `~/.config/systemd/user/`, then run
-`systemctl --user daemon-reload`. The portable `./launch.sh --debug` runs directly.
+OBS Browser Source: **http://127.0.0.1:31337/**, **1200 × 900**, Custom CSS empty.
+Diagnostics: http://127.0.0.1:31337/diagnostics.html
+Debug: `./launch.sh --debug`.
 
 ## Press Colors
 
-Open http://127.0.0.1:31337/settings.html to choose one global pressed-control color
-or individual colors for each control. Save updates open overlays automatically;
-Reset to defaults restores the original blue (#25a7ff). Settings are stored in
-`~/.config/SteamControllerGamepadViewer/press-colors.json` (or `$XDG_CONFIG_HOME`),
-shared by OBS and normal browsers, and survive restarts.
+Open http://127.0.0.1:31337/settings.html for one global highlight color or
+individual colors per control. Save updates open overlays automatically.
+Default and Reset use the original blue (#25a7ff). Settings persist in
+`~/.config/SteamControllerGamepadViewer/press-colors.json` (or `$XDG_CONFIG_HOME`).
+
+## Desktop launcher and optional autostart
+
+Run `python3 install-desktop.py` to install the application-menu launcher and
+user service for this extracted directory. This does not enable autostart.
+Use `systemctl --user start steam-controller-viewer.service` to start it and
+`systemctl --user stop steam-controller-viewer.service` to stop it.
+Logs: `journalctl --user -u steam-controller-viewer.service -f`.
+Enable autostart: `systemctl --user enable steam-controller-viewer.service`.
+Disable: `systemctl --user disable steam-controller-viewer.service`.
+Stop the service before running debug mode directly.
+
+## HID permissions
+
+If device access is denied, run `./install-udev.sh` (requires sudo only for the rule).
+It grants session access solely to Valve receiver 28de:1304. Reconnect if needed.
+Other hardware IDs need their own reviewed rule. Never run the viewer as root.
+
+## Limitations and credits
+
+BLE framing is not implemented. View/Menu/Steam transitions and digital pad-click
+flags are not conclusively hardware verified. Classic hardware and physical
+sleep/unplug/reconnect are not fully verified. See the repository support table.
+
+Linux/SteamOS port of Ramonchi_5’s Steam Controller Gamepad Viewer:
+https://github.com/ramonchi5/Steam-Controller-Gamepad-Viewer-by-Ramonchi_5
+Code: MIT; retain LICENSE and THIRD_PARTY_NOTICES.md. Valve names/artwork remain
+Valve property. Unofficial project; no Valve affiliation, endorsement or sponsorship.

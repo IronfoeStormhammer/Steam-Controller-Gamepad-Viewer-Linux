@@ -64,7 +64,7 @@ freely, subject to the following restrictions:
 - Component: .NET runtime and ASP.NET Core framework libraries.
 - Source: https://github.com/dotnet/runtime
 - License: MIT License, https://github.com/dotnet/runtime/blob/main/LICENSE.TXT
-- Use in this project: framework/runtime used to build and run the app. No NuGet package dependencies are currently declared by this repository.
+- Use in this project: framework/runtime used to build and run the app. The runtime app has no external NuGet package dependencies. Tests use xUnit (Apache-2.0), xunit.runner.visualstudio (MIT), and Microsoft.NET.Test.Sdk (MIT); these test-only tools are not included in the runtime archive.
 
 ## AI Assistance
 
@@ -74,7 +74,7 @@ OpenAI Codex assisted with implementation. Codex did not provide a separate thir
 The Linux HID transport and classic-controller extensions are original implementation.
 Protocol offsets cross-checked against Linux hid-steam.c documentation:
 https://github.com/torvalds/linux/blob/master/drivers/hid/hid-steam.c
-No kernel source code is included or copied. Triton parsing and artwork remain upstream MIT.
+No kernel source code is included or copied. Triton parsing retains the upstream code license; artwork is governed by the Valve notice above.
 The self-contained release includes the Microsoft .NET / ASP.NET Core runtime (MIT);
 its bundled third-party notices and license files are retained. SDL is not bundled or
 required by the passive Linux backend.

@@ -1,167 +1,151 @@
-# Steam Controller Gamepad Viewer
+# Steam Controller Gamepad Viewer for Linux
 
-Local Steam Controller overlay for OBS. It runs a small local-only web server on `127.0.0.1`, reads the Steam Controller through SDL3 plus Valve HID reports, and draws a Steam Controller viewer with live trackpad finger tracking, grip sense, and capacitive stick touch.
+A Linux/SteamOS port of **[Ramonchi_5’s Steam Controller Gamepad Viewer](https://github.com/ramonchi5/Steam-Controller-Gamepad-Viewer-by-Ramonchi_5)** for OBS, with direct access to the trackpads, rear controls, and sensors that generic gamepad overlays normally miss. Steam can remain running.
 
-This is currently a browser-source overlay. A native OBS plugin would be a better long-term version, but the local URL works offline once the app is running and does not require gamepadviewer.com or any internet service.
+**[Download v2.0.2](../../releases/tag/v2.0.2)** · [All releases](../../releases) · [Changelog](CHANGELOG.md)
 
-## How It Runs
+![The actual controller overlay running on SteamOS](docs/images/controller-overlay.png)
 
-The URL only works while `SteamControllerGamepadViewer.exe` is running. After restarting Windows, run `SteamControllerGamepadViewer.exe` again before OBS can load the local URL.
+## Features
 
-The release starts only when you explicitly run `SteamControllerGamepadViewer.exe`. If you want to avoid clicking the exe every time, the same zip includes optional install/uninstall scripts for a Windows Startup shortcut.
-
-There is one release zip:
-
-- Portable by default: run `SteamControllerGamepadViewer.exe` whenever you want the OBS URL to work.
-- Optional Start with Windows: run `Install Start With Windows.cmd` from the extracted folder if you want Windows to launch it for you.
-
-## AI Disclosure
-
-This viewer was coded with help from OpenAI Codex. The project is human-directed and reviewed, but AI assistance was part of the implementation. If AI-assisted software is a deal-breaker for you, please use another viewer or OBS input overlay.
-
-## Presets
-
-Default v2.0.1 Preset:
-
-```text
-http://127.0.0.1:31337/?bodyLines=10___innerBodyLines=10___joystickLines=10___btnLines=10___backBtnLines=10___linesColor=#ffffff___linesOpac=55%___bodyOpac=30%___bodyColor=#000000___btnIdle=#25a7ff___btnIdleOpac=0%___btnPressed=#25a7ff___btnPressedOpac=100%___triggerIdleOpac=0%___triggerIdleLinesOpac=0%___shine=100%
-```
-
-Slightly Thicker Outlines Preset:
-
-```text
-http://127.0.0.1:31337/?bodyLines=15___innerBodyLines=15___joystickLines=15___btnLines=15___backBtnLines=15___linesColor=#ffffff___linesOpac=55%___bodyOpac=30%___bodyColor=#000000___btnIdle=#25a7ff___btnIdleOpac=0%___btnPressed=#25a7ff___btnPressedOpac=100%___triggerIdleOpac=0%___triggerIdleLinesOpac=0%___shine=100%
-```
-
-Thicker Outlines Preset:
-
-```text
-http://127.0.0.1:31337/?bodyLines=20___innerBodyLines=20___joystickLines=20___btnLines=20___backBtnLines=20___linesColor=#ffffff___linesOpac=55%___bodyOpac=30%___bodyColor=#000000___btnIdle=#25a7ff___btnIdleOpac=0%___btnPressed=#25a7ff___btnPressedOpac=100%___triggerIdleOpac=0%___triggerIdleLinesOpac=0%___shine=100%
-```
-
-Much Thicker Outlines Preset:
-
-```text
-http://127.0.0.1:31337/?bodyLines=30___innerBodyLines=30___joystickLines=30___btnLines=30___backBtnLines=30___linesColor=#ffffff___linesOpac=55%___bodyOpac=30%___bodyColor=#000000___btnIdle=#25a7ff___btnIdleOpac=0%___btnPressed=#25a7ff___btnPressedOpac=100%___triggerIdleOpac=0%___triggerIdleLinesOpac=0%___shine=100%
-```
-
-## Customize
-
-You can customize the overlay directly from the OBS Browser Source URL. Options can be separated with `___` for readability, as shown above, or with the normal `&` query separator. Both formats work.
-
-Line thickness uses `10` as the default v2 look. Use `15` for 1.5x, `20` for 2x, `30` for 3x, or `0` to hide that line group.
-
-Opacity values accept a percent sign, such as `55%` or `0%`. Colors use normal HTML hex colors, such as `#25a7ff`.
-
-Useful URL options:
-
-- `bodyLines=10` changes the outer controller body and bumper line thickness.
-- `innerBodyLines=10` changes the inner body/handle line thickness.
-- `joystickLines=10` changes the joystick-area circle line thickness.
-- `btnLines=10` changes ABXY, dpad, Steam/View/Menu, touch-click, and trackpad line thickness.
-- `backBtnLines=10` changes L4/L5/R4/R5 line thickness.
-- `linesColor=#ffffff` changes idle line and icon color.
-- `linesOpac=55%` changes idle line and icon opacity. Pressed input outlines stay white and fully visible.
-- `bodyColor=#000000` changes the controller body fill color.
-- `bodyOpac=30%` changes the controller body fill opacity.
-- `btnIdle=#25a7ff` changes the unpressed input, dpad, joystick circle, and trackpad idle color.
-- `btnIdleOpac=0%` changes the unpressed input, dpad, joystick circle, and trackpad idle opacity.
-- `btnPressed=#25a7ff` changes the pressed/touched input color.
-- `btnPressedOpac=100%` changes the pressed/touched input opacity.
-- `triggerIdleOpac=0%` changes the unpressed trigger fill opacity.
-- `triggerIdleLinesOpac=0%` changes the unpressed trigger line opacity. Pressed trigger lines are always fully visible.
-- `shine=100%` changes input glow strength. Use `50%` for half glow or `0%` for no glow.
-
-Extra testing options:
-
-- `title=1` shows the title.
-- `debug=1` shows connection/status text.
-- `bg=solid` gives the page a dark background for normal browser testing.
-- `preview=all` forces overlay layers visible for visual checking.
-
-## Run
-
-### Release build
-
-1. Download and extract the release zip.
-2. Double-click `SteamControllerGamepadViewer.exe`.
-3. Add one of the preset URLs above as an OBS Browser Source.
-
-The release zip contains:
-
-- `SteamControllerGamepadViewer.exe`
-- `README.md`
-- `LICENSE`
-- `THIRD_PARTY_NOTICES.md`
-- `Install Start With Windows.cmd` (optional)
-- `Uninstall Start With Windows.cmd` (optional)
-
-### From source
-
-Use Command Prompt or double-click:
-
-```text
-Run-SteamControllerViewer.cmd
-```
-
-That script uses `dotnet run` and avoids PowerShell execution-policy issues. The PowerShell script is kept only as a developer convenience.
-
-## OBS Setup
-
-Add a Browser Source with:
-
-```text
-URL: use one of the preset URLs above
-Width: 1200
-Height: 900
-Custom CSS: leave empty
-```
-
-The URL is local loopback, not a website. If the URL does not load, start the app first.
-
-## Controller Support
-
-The current target is Valve's Steam Controller. The app does not open Steam's controller tester window; it reads current state and redraws the overlay directly, so button releases are shown as releases too.
-
-Supported inputs:
-
-- ABXY, dpad, bumpers, analog triggers, sticks, L3/R3, capacitive stick touch, Steam/View/Menu.
-- Left and right trackpad touch position, click pressure, and live finger position.
-- Four rear grip buttons.
-- Left and right grip-sense strips.
-
-Capacitive stick touch controls whether the large moving joystick dots are visible. The small center dots stay visible as neutral reference points. If a stick moves more than about 8% from center, the moving dot is shown even if the capacitive touch sensor misses your thumb.
-
-Gyro is not displayed. A 2D gyro display was tested and removed because it was harder to read than the rest of the overlay. A dedicated 3D controller viewer is a better fit if you want to show gyro movement clearly.
-
-SDL3 is loaded from the app folder first, then from the default Steam install folders. You can override the path with `--sdl3 "C:\path\to\SDL3.dll"` or the `SDL3_PATH` environment variable.
-
-If SDL3 cannot open the controller after a firmware update, the app falls back to fresh Valve HID reports when they are available. That keeps the overlay connected for Steam Controller firmware/device-id changes that still expose the same raw HID report shape.
-
-## Building Release Zip
-
-From a source checkout:
-
-```text
-Build-Release.cmd
-```
-
-The release zip is created under `artifacts\release`:
-
-- `v2.0.1.Steam.Controller.Viewer.zip`
-
-Upload that zip to GitHub Releases. Do not upload the normal `publish` folder unless you specifically want a framework-dependent developer build.
-
-## License And Notices
-
-The original source code in this repository is MIT licensed. Third-party components, referenced projects, and Valve/Steam assets are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
-Important: the Steam Controller name, Steam name, Valve trademarks, and the controller artwork/assets remain Valve property. This project is unofficial and not endorsed by Valve.
+- Linux x86_64, including SteamOS / Steam Deck Desktop Mode.
+- OBS Browser Source using the existing upstream controller artwork and visual customization.
+- Passive, read-only physical HID input alongside Steam; no exclusive device grab, remapping, firmware commands, or root viewer.
+- Live left/right trackpad positions, touch, and pressure; rear buttons L4/L5/R4/R5; grip-sense strips on supported hardware.
+- Analog trigger depth, joystick movement/click/capacitive touch, and D-pad visualization.
+- **Persistent global or per-control press colors**, with the original blue as the default.
+- Local/offline operation after download, with the server bound only to `127.0.0.1:31337`.
+- Live diagnostics, stale-input clearing, and periodic device rediscovery. Physical reconnect remains unverified.
 
 ## Press Colors
 
-Open http://127.0.0.1:31337/settings.html to choose one global pressed-control color
-or individual colors for each control. Save updates open overlays automatically;
-Reset to defaults restores the original blue (#25a7ff). Settings are stored in
-`~/.config/SteamControllerGamepadViewer/press-colors.json` (or `$XDG_CONFIG_HOME`),
-shared by OBS and normal browsers, and survive restarts.
+Open **http://127.0.0.1:31337/settings.html** and select:
+
+- **Global color** — one highlight color for every control.
+- **Per-control colors** — individual colors for buttons, triggers, sticks, pads, and grip regions.
+
+Use the color pickers and **Save**; open overlays, including OBS, update automatically. Reset restores the original blue (`#25a7ff`). No JSON editing is required. Settings survive application, Steam, OBS, and system restarts in `~/.config/SteamControllerGamepadViewer/press-colors.json` (or the corresponding `$XDG_CONFIG_HOME` directory).
+
+![Press-color settings with an example saved global color](docs/images/press-color-settings.png)
+
+## Download
+
+Go to **[GitHub Releases — v2.0.2](../../releases/tag/v2.0.2)** and download:
+
+- `Steam.Controller.Gamepad.Viewer-Linux-x64-v2.0.2.tar.gz`
+- `SHA256SUMS`
+
+The archive includes the .NET runtime; an SDK is needed only to build from source. Standard Linux runtime dependencies, including glibc, OpenSSL, ICU, and zlib, must be available. They are already present on the tested SteamOS installation.
+
+## Quick Start
+
+1. Download both release assets and verify with `sha256sum -c SHA256SUMS`.
+2. Extract with `tar -xzf Steam.Controller.Gamepad.Viewer-Linux-x64-v2.0.2.tar.gz`.
+3. Enter `SteamControllerViewer-linux-x64` and run `./launch.sh` (or `./SteamControllerGamepadViewer`).
+4. Install the included udev rule **only if device access is denied**; see HID Permissions.
+5. Add the OBS Browser Source below.
+
+Optional: `python3 install-desktop.py` installs an application-menu entry and an optional user service for this extracted folder. Keep that folder in a stable location. Autostart is not enabled automatically.
+
+## OBS Setup
+
+| Setting | Value |
+|---|---|
+| Source | Browser Source |
+| URL | `http://127.0.0.1:31337/` |
+| Width | `1200` |
+| Height | `900` |
+| Custom CSS | Empty |
+
+Existing upstream URL style parameters remain supported. The overlay contains no permanent settings controls.
+
+## Diagnostics
+
+Open **http://127.0.0.1:31337/diagnostics.html** for live controls, observed ranges, and physical HID transport status.
+
+Run `./launch.sh --debug` for discovery and report-count logging. If a user service is running, stop it first with `systemctl --user stop steam-controller-viewer.service` so only one server uses port 31337. Do not run the viewer as root.
+
+## Supported Inputs
+
+Hardware verification used a real controller through the **Valve Steam Controller Puck receiver (`28de:1304`)**, while Steam remained running. The Deck’s internal `28de:1205` device is deliberately excluded from the external-controller reader. Features vary by controller generation; a classic 2015 controller has two rear levers, not four.
+
+| Input / capability | Status |
+|---|---|
+| A/B/X/Y, LB/RB | Hardware verified, including release transitions |
+| Both analog triggers | Hardware verified through full range |
+| Joystick X/Y, click, capacitive touch | Hardware verified |
+| D-pad directions | Hardware verified |
+| Left/right trackpad touch and live X/Y | Hardware verified |
+| Left/right trackpad pressure | Hardware verified |
+| L4/L5/R4/R5 | Hardware verified on the attached controller |
+| Left/right grip-sense strips | Hardware verified |
+| View, Menu, Steam button | Implemented; transitions not conclusively hardware captured |
+| Digital trackpad-click flags | Implemented; flags not conclusively hardware captured; pressure visualization works |
+| Quick Access | Implemented; not hardware verified |
+| Automatic rediscovery and stale-state clearing | Implemented; physical sleep/unplug/reconnect not fully hardware verified |
+| Classic-controller USB/dongle report decoding | Implemented and parser tested; classic hardware not verified |
+| Bluetooth LE framing | Not implemented |
+| Gyro visualization | Not provided |
+
+## Steam Deck / SteamOS
+
+Developed and tested on Steam Deck OLED running SteamOS Desktop Mode. **Steam can remain running** while the viewer reads physical input. The application is a Linux x86_64 build, not restricted to SteamOS, but other distributions and controller generations need their own hardware verification.
+
+## HID Permissions
+
+SteamOS already granted session access on the tested machine. If `/api/hid` reports access denied, run the included `./install-udev.sh`. It requests sudo only to install a narrowly scoped `uaccess` rule for the observed Valve receiver **28de:1304**, reload udev, and trigger a permission refresh. Reconnect the receiver if needed.
+
+The rule intentionally does not grant access to every HID device. Other controller IDs need an appropriately reviewed rule. Never use `chmod 777` on HID devices or run the viewer as root.
+
+## Building From Source
+
+Install a **.NET 8 SDK** (see `global.json`), then run from the repository root:
+
+```sh
+dotnet restore SteamControllerGamepadViewer.sln
+dotnet build SteamControllerGamepadViewer.sln -c Release --no-restore
+dotnet test SteamControllerGamepadViewer.sln -c Release --no-build
+dotnet publish src/SteamControllerGamepadViewer/SteamControllerGamepadViewer.csproj \
+  -c Release -r linux-x64 --self-contained true -o artifacts/publish-linux-x64
+./scripts/package-linux.sh 2.0.2 artifacts/publish-linux-x64
+```
+
+Archives and checksums appear in `artifacts/release/`. Run `./scripts/package-linux.sh 2.0.2` to perform publish and packaging together. `DOTNET` can point to a user-local SDK executable. No immutable SteamOS system changes are needed.
+
+## How It Works
+
+```text
+Physical Steam Controller
+  → passive Linux hidraw transport + existing upstream report parser
+  → application state model
+  → localhost ASP.NET Core server (127.0.0.1:31337)
+  → browser overlay (server-sent events)
+  → OBS Browser Source
+```
+
+Generic Gamepad API overlays often receive only a translated conventional gamepad, losing physical trackpad and rear-control data. The Linux backend reads vendor HID reports directly. It deliberately does not initialize SDL hardware drivers, avoiding configuration writes. The existing cross-platform SDL loader and Windows implementation are retained in source; SDL is not bundled or required by this Linux runtime.
+
+## Known Limitations
+
+- BLE framing is not implemented.
+- View/Menu/Steam transitions and digital trackpad-click flags were not conclusively hardware captured.
+- Classic-controller hardware and physical sleep/unplug/reconnect are not fully hardware verified.
+- One active external controller is displayed at a time. Sensor availability depends on hardware generation.
+
+## Credits
+
+**Ramonchi_5 — original [Steam Controller Gamepad Viewer](https://github.com/ramonchi5/Steam-Controller-Gamepad-Viewer-by-Ramonchi_5).** This repository provides the Linux/SteamOS port and persistent press-color configuration; it does not claim authorship of the original project. Upstream history and copyright notices are preserved; the browser-source baseline is recorded in [LINUX_BASELINE.txt](LINUX_BASELINE.txt).
+
+Built on Microsoft .NET / ASP.NET Core. The source retains SDL integration; Linux transport uses the system’s hidraw/libc interfaces. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependencies, references, and Valve-owned artwork.
+
+## Development
+
+The Linux port was developed with **OpenAI Codex under human direction and physical hardware testing**. Automated parser/rendering tests and human controller testing have different scopes; the support table records the remaining verification gaps. Contributions are welcome: [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+Project code is MIT licensed; the original Ramonchi_5 copyright notice is retained in [LICENSE](LICENSE). Third-party components and Valve artwork retain their own rights and notices.
+
+## Valve Disclaimer
+
+Steam, Steam Controller, Steam Deck, Valve, and related names, marks, and artwork are trademarks/property of Valve Corporation. This project is unofficial and is not affiliated with, endorsed, or sponsored by Valve.

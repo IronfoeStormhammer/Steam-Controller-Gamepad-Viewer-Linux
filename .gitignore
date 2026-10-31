@@ -9,3 +9,19 @@ logs/
 artifacts/
 
 tools/
+
+# Local diagnostics, credentials, profiles and scratch material
+work/
+outputs/
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.dmp
+core
+core.*
+*.pcap
+*.pcapng
+__pycache__/
+*.pyc
