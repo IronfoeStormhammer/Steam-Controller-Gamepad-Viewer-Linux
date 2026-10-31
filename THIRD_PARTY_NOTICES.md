@@ -69,3 +69,12 @@ freely, subject to the following restrictions:
 ## AI Assistance
 
 OpenAI Codex assisted with implementation. Codex did not provide a separate third-party code library; the project includes an AI-assistance disclosure in the README so users can make an informed choice.
+
+## Linux port
+The Linux HID transport and classic-controller extensions are original implementation.
+Protocol offsets cross-checked against Linux hid-steam.c documentation:
+https://github.com/torvalds/linux/blob/master/drivers/hid/hid-steam.c
+No kernel source code is included or copied. Triton parsing and artwork remain upstream MIT.
+The self-contained release includes the Microsoft .NET / ASP.NET Core runtime (MIT);
+its bundled third-party notices and license files are retained. SDL is not bundled or
+required by the passive Linux backend.

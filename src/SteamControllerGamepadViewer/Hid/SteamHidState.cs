@@ -7,6 +7,27 @@ internal sealed class SteamHidState
     private readonly object _gate = new();
     private SteamHidSnapshot? _current;
     private SteamHidStatus _status = new();
+    private readonly Dictionary<string, HashSet<bool>> _observed = new();
+    private readonly Dictionary<string, double[]> _ranges = new();
+    public object Verification { get { lock (_gate) return new { buttons = _observed.ToDictionary(p => p.Key, p => p.Value.ToArray()), ranges = _ranges.ToDictionary(p => p.Key, p => p.Value.ToArray()) }; } }
+
+    private void Observe(string prefix, object value)
+    {
+        foreach (var property in value.GetType().GetProperties())
+        {
+            var key = prefix + property.Name;
+            if (property.GetValue(value) is bool button)
+            {
+                if (!_observed.TryGetValue(key, out var values)) _observed[key] = values = new();
+                values.Add(button);
+            }
+            else if (property.GetValue(value) is double number)
+            {
+                if (!_ranges.TryGetValue(key, out var range)) _ranges[key] = range = new[] { number, number };
+                range[0] = Math.Min(range[0], number); range[1] = Math.Max(range[1], number);
+            }
+        }
+    }
 
     public void MarkReport(int length, byte reportId)
     {
@@ -26,6 +47,9 @@ internal sealed class SteamHidState
         lock (_gate)
         {
             _current = snapshot with { UpdatedAt = DateTimeOffset.UtcNow };
+            if (snapshot.Buttons is not null) Observe("", snapshot.Buttons);
+            if (snapshot.Axes is not null) Observe("", snapshot.Axes);
+            Observe("LeftPad.", snapshot.Left); Observe("RightPad.", snapshot.Right);
             _status = _status with
             {
                 LastReportAt = DateTimeOffset.UtcNow,

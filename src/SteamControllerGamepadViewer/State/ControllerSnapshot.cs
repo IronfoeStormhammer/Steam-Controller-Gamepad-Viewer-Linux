@@ -37,8 +37,8 @@ public sealed record ControllerButtons
     public bool RightBumper { get; init; }
     public bool LeftStick { get; init; }
     public bool RightStick { get; init; }
-    public bool LeftStickTouch { get; init; } = true;
-    public bool RightStickTouch { get; init; } = true;
+    public bool LeftStickTouch { get; init; }
+    public bool RightStickTouch { get; init; }
     public bool DpadUp { get; init; }
     public bool DpadDown { get; init; }
     public bool DpadLeft { get; init; }

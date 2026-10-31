@@ -270,7 +270,7 @@ internal sealed class SteamHidTouchpadService : BackgroundService
         return string.Empty;
     }
 
-    private static bool TryParseSnapshot(
+    internal static bool TryParseSnapshot(
         ReadOnlySpan<byte> report,
         out SteamHidSnapshot snapshot)
     {
@@ -325,13 +325,13 @@ internal sealed class SteamHidTouchpadService : BackgroundService
             HasFlag(buttons, 0x02000000),
             HasFlag(buttons, 0x04000000),
             ReadSigned(report, 18),
-            (short)-ReadSigned(report, 20),
+            Invert(ReadSigned(report, 20)),
             leftPressure);
         var right = CreatePad(
             HasFlag(buttons, 0x00200000),
             HasFlag(buttons, 0x00400000),
             ReadSigned(report, 24),
-            (short)-ReadSigned(report, 26),
+            Invert(ReadSigned(report, 26)),
             rightPressure);
 
         snapshot = new SteamHidSnapshot(
@@ -368,9 +368,9 @@ internal sealed class SteamHidTouchpadService : BackgroundService
                 LeftTrigger = NormalizeTrigger(BinaryPrimitives.ReadUInt16LittleEndian(report[6..8])),
                 RightTrigger = NormalizeTrigger(BinaryPrimitives.ReadUInt16LittleEndian(report[8..10])),
                 LeftStickX = NormalizeAxis(ReadSigned(report, 10)),
-                LeftStickY = NormalizeAxis((short)-ReadSigned(report, 12)),
+                LeftStickY = NormalizeAxis(Invert(ReadSigned(report, 12))),
                 RightStickX = NormalizeAxis(ReadSigned(report, 14)),
-                RightStickY = NormalizeAxis((short)-ReadSigned(report, 16)),
+                RightStickY = NormalizeAxis(Invert(ReadSigned(report, 16))),
             },
             left,
             right,
@@ -401,14 +401,14 @@ internal sealed class SteamHidTouchpadService : BackgroundService
             leftTouched,
             leftClicked,
             ReadSigned(data, 16),
-            (short)-ReadSigned(data, 18),
+            Invert(ReadSigned(data, 18)),
             leftClicked ? 1 : leftTouched ? 0.35 : 0);
 
         right = CreatePad(
             rightTouched,
             rightClicked,
             ReadSigned(data, 20),
-            (short)-ReadSigned(data, 22),
+            Invert(ReadSigned(data, 22)),
             rightClicked ? 1 : rightTouched ? 0.35 : 0);
 
         return true;
@@ -461,6 +461,8 @@ internal sealed class SteamHidTouchpadService : BackgroundService
             Y = NormalizeSigned(y),
             Pressure = Clamp01(pressure),
         };
+
+    private static short Invert(short value) => (short)Math.Clamp(-(int)value, -32768, 32767);
 
     private static short ReadSigned(ReadOnlySpan<byte> data, int offset)
         => BinaryPrimitives.ReadInt16LittleEndian(data[offset..(offset + 2)]);

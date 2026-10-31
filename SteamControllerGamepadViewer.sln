@@ -1,8 +1,12 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamControllerGamepadViewer", "src\SteamControllerGamepadViewer\SteamControllerGamepadViewer.csproj", "{2B8B6236-47D9-493D-A86C-7083D7ED2EBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9502AE49-5D61-49F5-B893-6DE824B1A370}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamControllerGamepadViewer.Tests", "tests\SteamControllerGamepadViewer.Tests\SteamControllerGamepadViewer.Tests.csproj", "{0BF3A81D-5299-416A-BE74-8C0E3FAD872E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,8 +18,15 @@ Global
 		{2B8B6236-47D9-493D-A86C-7083D7ED2EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B8B6236-47D9-493D-A86C-7083D7ED2EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B8B6236-47D9-493D-A86C-7083D7ED2EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BF3A81D-5299-416A-BE74-8C0E3FAD872E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BF3A81D-5299-416A-BE74-8C0E3FAD872E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BF3A81D-5299-416A-BE74-8C0E3FAD872E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BF3A81D-5299-416A-BE74-8C0E3FAD872E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0BF3A81D-5299-416A-BE74-8C0E3FAD872E} = {9502AE49-5D61-49F5-B893-6DE824B1A370}
 	EndGlobalSection
 EndGlobal

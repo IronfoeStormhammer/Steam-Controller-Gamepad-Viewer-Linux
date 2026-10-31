@@ -41,6 +41,11 @@ internal static class SdlNative
             return NativeLibrary.Load(_dllPath);
         }
 
+        if (OperatingSystem.IsLinux())
+        {
+            foreach (var name in new[] { Path.Combine(AppContext.BaseDirectory, "libSDL3.so.0"), "libSDL3.so.0", "libSDL3.so" })
+                if (NativeLibrary.TryLoad(name, out var handle)) return handle;
+        }
         return IntPtr.Zero;
     }
 

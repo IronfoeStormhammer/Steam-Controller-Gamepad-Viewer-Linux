@@ -325,7 +325,7 @@ function readNumber(value, fallback, min, max) {
     ? ""
     : String(value).trim().replace(/%$/, "");
   const number = Number(normalized);
-  if (!Number.isFinite(number)) {
+  if (normalized === "" || !Number.isFinite(number)) {
     return fallback;
   }
 

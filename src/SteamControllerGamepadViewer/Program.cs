@@ -10,23 +10,30 @@ SdlNative.Configure(args);
 var physicalWebRoot = WebRootResolver.ResolvePhysical();
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-    Args = args,
+    Args = args.Where(a => a != "--debug" && a != "--debug-hid").ToArray(),
     WebRootPath = physicalWebRoot ?? AppContext.BaseDirectory,
 });
 
 builder.Logging.ClearProviders();
+builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+if (args.Contains("--debug")) builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Logging.AddSimpleConsole(options =>
 {
     options.SingleLine = true;
     options.TimestampFormat = "HH:mm:ss ";
 });
 
-builder.WebHost.UseUrls(builder.Configuration["urls"] ?? builder.Configuration["Urls"] ?? "http://127.0.0.1:31337");
+builder.WebHost.UseUrls("http://127.0.0.1:31337");
 
 builder.Services.AddSingleton<ControllerStateHub>();
 builder.Services.AddSingleton<SteamHidState>();
-builder.Services.AddHostedService<SteamHidTouchpadService>();
-builder.Services.AddHostedService<SdlControllerService>();
+if (OperatingSystem.IsLinux())
+    builder.Services.AddHostedService<LinuxHidService>();
+else
+{
+    builder.Services.AddHostedService<SteamHidTouchpadService>();
+    builder.Services.AddHostedService<SdlControllerService>();
+}
 
 var app = builder.Build();
 
@@ -44,12 +51,17 @@ app.MapGet("/events", async (HttpContext context, ControllerStateHub hub) =>
     context.Response.Headers.Connection = "keep-alive";
     context.Response.ContentType = "text/event-stream";
 
-    await foreach (var snapshot in hub.Subscribe(context.RequestAborted))
+    using var streamLifetime = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted, app.Lifetime.ApplicationStopping);
+    try
+    {
+    await foreach (var snapshot in hub.Subscribe(streamLifetime.Token))
     {
         var json = JsonSerializer.Serialize(snapshot, AppJson.Options);
         await context.Response.WriteAsync($"data: {json}\n\n", context.RequestAborted);
-        await context.Response.Body.FlushAsync(context.RequestAborted);
+        await context.Response.Body.FlushAsync(streamLifetime.Token);
     }
+    }
+    catch (OperationCanceledException) when (streamLifetime.IsCancellationRequested) { }
 });
 
 app.MapGet("/health", (ControllerStateHub hub) => Results.Json(new
@@ -59,6 +71,8 @@ app.MapGet("/health", (ControllerStateHub hub) => Results.Json(new
     name = hub.Current.Name,
     status = hub.Current.Status,
 }, AppJson.Options));
+
+app.MapGet("/api/verification", (SteamHidState hid) => Results.Json(hid.Verification, AppJson.Options));
 
 app.MapGet("/api/hid", (SteamHidState hid) => Results.Json(hid.Status, AppJson.Options));
 
