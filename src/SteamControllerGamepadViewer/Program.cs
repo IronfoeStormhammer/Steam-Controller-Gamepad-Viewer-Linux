@@ -1,4 +1,5 @@
 using System.Text.Json;
+using SteamControllerGamepadViewer;
 using System.Reflection;
 using System.Globalization;
 using SteamControllerGamepadViewer.Hid;
@@ -25,6 +26,7 @@ builder.Logging.AddSimpleConsole(options =>
 
 builder.WebHost.UseUrls("http://127.0.0.1:31337");
 
+builder.Services.AddSingleton<PressColorStore>();
 builder.Services.AddSingleton<ControllerStateHub>();
 builder.Services.AddSingleton<SteamHidState>();
 if (OperatingSystem.IsLinux())
@@ -42,6 +44,29 @@ if (physicalWebRoot is not null)
     app.UseDefaultFiles();
     app.UseStaticFiles();
 }
+
+app.MapGet("/api/press-colors", (HttpContext context, PressColorStore store) =>
+{
+    context.Response.Headers.CacheControl = "no-store";
+    var config = store.Current;
+    return Results.Json(new { config.Mode, config.GlobalColor, config.Controls, configured = store.HasSavedSettings }, AppJson.Options);
+});
+app.MapGet("/api/press-colors/controls", () => Results.Json(PressColorStore.ControlNames));
+app.MapPut("/api/press-colors", (HttpContext context, PressColorConfig config, PressColorStore store) =>
+{
+    if (!SameOrigin(context)) return Results.StatusCode(403);
+    try { return Results.Json(store.Save(config), AppJson.Options); }
+    catch (ArgumentException ex) { return Results.BadRequest(new { error = ex.Message }); }
+    catch (IOException) { return Results.Problem("Unable to save press colors."); }
+    catch (UnauthorizedAccessException) { return Results.Problem("Unable to save press colors."); }
+});
+app.MapPost("/api/press-colors/reset", (HttpContext context, PressColorStore store) =>
+{
+    if (!SameOrigin(context)) return Results.StatusCode(403);
+    try { return Results.Json(store.Reset(), AppJson.Options); }
+    catch (IOException) { return Results.Problem("Unable to save press colors."); }
+    catch (UnauthorizedAccessException) { return Results.Problem("Unable to save press colors."); }
+});
 
 app.MapGet("/api/state", (ControllerStateHub hub) => Results.Json(hub.Current, AppJson.Options));
 
@@ -112,6 +137,12 @@ app.MapGet("/{**assetPath}", async (string? assetPath, HttpContext context) =>
 });
 
 app.Run();
+
+static bool SameOrigin(HttpContext context)
+{
+    var origin = context.Request.Headers.Origin.ToString();
+    return origin.Length == 0 || origin == "http://127.0.0.1:31337";
+}
 
 static double QueryNumber(string? value, double fallback, double min, double max)
 {

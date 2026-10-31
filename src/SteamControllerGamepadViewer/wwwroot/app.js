@@ -480,6 +480,7 @@ function applyState(state) {
   setStick("right", a.rightStickX ?? 0, a.rightStickY ?? 0, b.rightStick, b.rightStickTouch ?? true);
   setTouchpad("left", state.leftTouchpad);
   setTouchpad("right", state.rightTouchpad);
+  window.PressColors?.refresh();
 }
 
 function statusText(state) {

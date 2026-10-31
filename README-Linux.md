@@ -39,3 +39,11 @@ every second. Physical sleep/reconnect has not been hardware-verified.
 For another installation path, edit the supplied user service's ExecStart and
 WorkingDirectory before copying it to `~/.config/systemd/user/`, then run
 `systemctl --user daemon-reload`. The portable `./launch.sh --debug` runs directly.
+
+## Press Colors
+
+Open http://127.0.0.1:31337/settings.html to choose one global pressed-control color
+or individual colors for each control. Save updates open overlays automatically;
+Reset to defaults restores the original blue (#25a7ff). Settings are stored in
+`~/.config/SteamControllerGamepadViewer/press-colors.json` (or `$XDG_CONFIG_HOME`),
+shared by OBS and normal browsers, and survive restarts.

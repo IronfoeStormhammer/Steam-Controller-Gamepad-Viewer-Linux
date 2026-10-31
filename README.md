@@ -157,3 +157,11 @@ Upload that zip to GitHub Releases. Do not upload the normal `publish` folder un
 The original source code in this repository is MIT licensed. Third-party components, referenced projects, and Valve/Steam assets are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 Important: the Steam Controller name, Steam name, Valve trademarks, and the controller artwork/assets remain Valve property. This project is unofficial and not endorsed by Valve.
+
+## Press Colors
+
+Open http://127.0.0.1:31337/settings.html to choose one global pressed-control color
+or individual colors for each control. Save updates open overlays automatically;
+Reset to defaults restores the original blue (#25a7ff). Settings are stored in
+`~/.config/SteamControllerGamepadViewer/press-colors.json` (or `$XDG_CONFIG_HOME`),
+shared by OBS and normal browsers, and survive restarts.

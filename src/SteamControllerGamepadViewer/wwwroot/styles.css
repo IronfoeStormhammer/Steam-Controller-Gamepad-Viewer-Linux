@@ -474,3 +474,16 @@ body.solid::before {
     font-size: 12px;
   }
 }
+
+/* Recolor touch/sense highlights while retaining the exact historical default. */
+.control.grip-sensor-line.press-colors-custom.active {
+  stroke: rgb(var(--button-pressed-rgb) / 0.74);
+}
+.stick-position.press-colors-custom.touched:not(.moved) {
+  fill: rgb(var(--button-pressed-rgb) / 0.9);
+  filter: drop-shadow(0 0 5px rgb(var(--button-pressed-rgb) / calc(0.34 * var(--shine-opacity))));
+}
+.pad-marker.press-colors-custom.touched:not(.pressed) .pad-dot {
+  fill: var(--button-pressed);
+  filter: drop-shadow(0 0 9px rgb(var(--button-pressed-rgb) / calc(0.95 * var(--shine-opacity))));
+}
